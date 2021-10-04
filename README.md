@@ -78,9 +78,12 @@ gmd.get_hidden_data()
 
 ```
 
-## Other Notes
+## Settings 
 
-The entire hidden system can be disabled, which allows the backend code to run faster, and allows the mod to act more like a documentation system only.
+- The entire hidden system can be disabled, which allows the backend code to run faster, and allows the mod to act more like a documentation system only. to make this change, edit `asdkfhlalskjdfh` and set `asdhlkasj` to false.
+- The chat command `/doc` can be disabled by setting `asdhlkasj` in `asdkfhlalskjdfh` to false.
+
+## Other Notes
 
 Notice with the hidden functionality, the use cases for this mod can expand. Categories and entries can be quests/lore/old dialog/etc. No sounds are generated
 from this mod, and no other popups are created, hopefully letting mod authors have as much flexibility as possible using it. 
