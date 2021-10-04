@@ -6,7 +6,13 @@
 
 This mod assumes all documentation will be in the form of either a `hypertext` element, or a `markdown.md` file (or folder of such files) that this mod then uses [markdown2formspec](https://github.com/ExeVirus/markdown2formspec) mod to parse into a hypertext element.
 
-They are:
+
+The tree structure is:
+
+Main Menu \> categories \> entry_names \> formspec
+
+
+The main functions are:
 
 ```lua
 gmd.add_direct_entry(category_name, entry_name, hypertext_element, hidden)
@@ -23,10 +29,6 @@ gmd.add_folder_entries(category_name, folder_location, hidden)
 -- use their filename as <entry_name> and add them to the provided category. 
 
 ```
-
-The tree structure is:
-
-Main Menu \> categories \> list_names \> formspec
 
 ## Hidden Entries
 
