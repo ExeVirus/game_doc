@@ -1,0 +1,15 @@
+--------------------------------------------------------------
+--                     formspecs.lua                        --
+--------------------------------------------------------------
+--                                                          --
+-- This file provides the 3 public modder-facing functions  --
+-- for generating game_doc formspecs. These are:            --
+--                                                          --
+-- <> game_doc.main_form()                                  --
+-- <> game_doc.category_form()                              --
+-- <> game_doc.entry_form()                                 --
+--                                                          --
+-- Use the above functions to show the stadard game_doc     --
+-- formspecs.                                               --
+--------------------------------------------------------------
+

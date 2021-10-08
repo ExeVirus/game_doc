@@ -15,34 +15,36 @@ Main Menu \> categories \> entry_names \> formspec
 The main functions are:
 
 ```lua
-gmd.add_direct_entry(category_name, entry_name, hypertext_element, hidden)
+game_doc.add_direct_entry(category_name, entry_name, hypertext_element, hidden)
 -- hidden is always optional, defaults to false
 -- Will add <entry_name> to <category_name> containing the hypertext formspec element to be displayed
 
-gmd.add_file_entry(category_name, entry_name, markdown_file, hidden)
+game_doc.add_file_entry(category_name, entry_name, markdown_file, hidden)
 -- hidden is always optional, defaults to false
 -- Will parse the provided markdown_file and add the resulting hypertext element to be found at <entry_name> in <category_name>
 
-gmd.add_folder_entries(category_name, folder_location, hidden)
--- hidden is always optional, defaults to false
+game_doc.add_folder_entries(category_name, folder_location, hide_category, hide_elements)
+-- hide_**** is always optional, defaults to false
 -- Will parse the provided folder for any `.md` files that are present, turn them into hypertext elements,
 -- use their filename as <entry_name> and add them to the provided category. 
+
 
 ```
 
 ## Hidden Entries
 
-This mod also supports hidden and unhidden entries, all categories and entries are shown by default to all players. To hide or unhide entries use:
+This mod also supports hidden and unhidden entries, all categories and entries are shown by default to all players. To hide or unhide entries use the following, if player_name is nil, this change occurs for all future joining players. If player_name is a boolean of "true", this change will occur
+for all known players, and all future joining players. If player_name is a boolean of "false", this change will occur for all currently connected players only. 
 
 ```lua
 
-gmd.hide_category(player_name, category)
+game_doc.hide_category(player_name, category)
 
-gmd.show_category(player_name, category)
+game_doc.show_category(player_name, category)
 
-gmd.hide_entry(player_name, entry)
+game_doc.hide_entry(player_name, entry)
 
-gmd.show_entry(player_name, entry)
+game_doc.show_entry(player_name, entry)
 
 ```
 
@@ -51,7 +53,7 @@ gmd.show_entry(player_name, entry)
 You can access the categories and entries via these functions. **BE CAREFUL**, these are not copies, and changes will affect things, read the mod code if you are worried by this warning.
 
 ```lua
-gmd.get_doc_data()
+game_doc.get_doc_data()
 -- Returns a table 
 -- {
 --  category_name { hidden=false/true, entries { entry1 { hidden=false/true, hypertext }, entry2 {hidden=false/true, hypertext } }
@@ -62,7 +64,7 @@ gmd.get_doc_data()
 
 -- Note the hidden values are just the starting values for new players, the player hidden entry/category data
 -- is held in this function:
-gmd.get_hidden_data()
+game_doc.get_hidden_data()
 -- Returns a table 
 -- {
 --  player_name  = {

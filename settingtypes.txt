@@ -1,0 +1,7 @@
+# Settings for game_doc
+
+# Enable/Disable the hidden entries system
+game_doc_hidden_enable (Hidden System Enable) enum Disabled Enabled,Disabled
+
+# All entires and categories are hidden by default
+game_doc_hidden_default (Shown by default) enum Disabled Enabled,Disabled

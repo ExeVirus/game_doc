@@ -1,0 +1,15 @@
+--------------------------------------------------------------
+--                 hidden_modifications.lua                 --
+--------------------------------------------------------------
+--                                                          --
+-- This file provides the 4 public modder-facing functions  --
+-- for hidden entries and categories. These are:            --
+--                                                          --
+-- <> game_doc.hide_category()                              --
+-- <> game_doc.show_category()                              --
+-- <> game_doc.hide_entry()                                 --
+-- <> game_doc.show_entry()                                 --
+--                                                          --
+-- Use the above functions to edit hidden-ness of game_doc. --
+--------------------------------------------------------------
+
