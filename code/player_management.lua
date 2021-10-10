@@ -25,3 +25,6 @@
 -- returned, the old player value will be remembered.       --
 --------------------------------------------------------------
 
+--All hidden data for each player is stored here
+game_doc.player_data = {}
+

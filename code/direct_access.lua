@@ -12,3 +12,12 @@
 -- changes to the backend data in game_doc                  --
 --------------------------------------------------------------
 
+game_doc.get_doc_data = function()
+    return game_doc.doc_data
+end
+
+game_doc.get_hidden_data = function()
+    return game_doc.player_data
+end
+
+-- Simple, right? 

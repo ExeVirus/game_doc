@@ -12,4 +12,3 @@
 --                                                          --
 -- Use the above functions to edit hidden-ness of game_doc. --
 --------------------------------------------------------------
-

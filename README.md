@@ -84,12 +84,20 @@ game_doc.get_hidden_data()
 
 ## Settings 
 
-- The entire hidden system can be disabled, which allows the backend code to run faster, and allows the mod to act more like a documentation system only. to make this change, edit `asdkfhlalskjdfh` and set `asdhlkasj` to false.
-- The chat command `/doc` can be disabled by setting `asdhlkasj` in `asdkfhlalskjdfh` to false.
+- The entire hidden system can be disabled, which allows the backend code to run faster, and allows the mod to act more like a documentation system only. to make this change, edit your `minetest.conf` and set `game_doc_hidden_enable` to false.
+- The chat command `/doc` can be disabled by setting `game_doc_enable_chat_command` in `minetest.conf` to false.
 
 ## Other Notes
 
-Notice with the hidden functionality, the use cases for this mod can expand. Categories and entries can be quests/lore/old dialog/etc. No sounds are generated
-from this mod, and no other popups are created, hopefully letting mod authors have as much flexibility as possible using it. 
+Notice with the hidden functionality, the use cases for this mod can expand. Categories and entries can be quests/lore/old dialog/etc. No sounds are generated from this mod, and no other popups are created, hopefully letting mod authors have as much flexibility as possible using it. 
 
+Also if you need to access the formspecs this mod generates for your own purposes, these functions are:
+
+```lua
+game_doc.main_form(player_name) --playername is optional (for the hidden system)
+
+game_doc.category_form(category, player_name) --playername is optional
+
+game_doc.entry_form(category, entry, player_name) --playername is optional
+```
 

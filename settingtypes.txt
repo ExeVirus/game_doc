@@ -1,7 +1,50 @@
 # Settings for game_doc
 
+#------------Control Settings------------#
+
 # Enable/Disable the hidden entries system
 game_doc_hidden_enable (Hidden System Enable) enum Disabled Enabled,Disabled
 
 # All entires and categories are hidden by default
-game_doc_hidden_default (Shown by default) enum Disabled Enabled,Disabled
+game_doc_hidden_default (Show all by default) enum Disabled Enabled,Disabled
+
+# Enable Chat command /game_doc (to show main formspec)
+game_doc_enable_chat_command (Enable chat command access) enum Enabled Enabled,Disabled
+
+#------------Graphical Settings------------#
+
+               --Dimensions--
+
+# Full Width of all game_doc formspecs
+game_doc_width (Formspec Width) float 20.0
+
+# Full height of all game_doc formspecs
+game_doc_height (Formspec Height) float 20.0
+
+# The margin between boxes and borders
+game_doc_edge_size (Edge Size) float 0.2
+
+# The header text area size (height)
+game_doc_entry_header_size (Header Size) float 2.0
+
+# The button widths
+game_doc_button_width (Button Width) float 5.0
+
+# The button heights
+game_doc_button_height (Button Height) float 1.6
+
+                 --Colors--
+
+# Formspec Background Color
+game_doc_bgcolor (Background Color) string #111E
+
+# Formspec heading Color
+game_doc_heading_color (Heading Color) string #AFA
+
+                 --Text Specific--
+
+# Main Formspec Name
+game_doc_main_name (Main Formspec Heading) string Game Guide
+
+# Main Formspec Heading Font-Size
+game_doc_main_font_size (Main Formspec Heading Fontsize) int 32
