@@ -61,10 +61,6 @@ end
 -- markdown_file: file_path to markdown file to load
 -- hidden: default false (based on settings), true will hide from players until
 --         shown via hidden_modifications.lua functions >> optional
-local x = game_doc.settings.edge_size
-local y = game_doc.settings.edge_size + game_doc.settings.header_size
-local w = game_doc.settings.width - game_doc.settings.edge_size * 2
-local h = game_doc.settings.height - game_doc.settings.edge_size * 2 - game_doc.settings.header_size
 game_doc.add_file_entry = function(category_name, entry_name, markdown_file, hidden)
     --safety check
     if category_name == nil or entry_name == nil or markdown_file == nil then
@@ -72,26 +68,16 @@ game_doc.add_file_entry = function(category_name, entry_name, markdown_file, hid
         return
     end
 
-    local md2f_settings = {
-        background_color = "#222E",
-        font_color = "#FFF",
-        heading_1_color = "#AFA",
-        heading_2_color = "#FAA",
-        heading_3_color = "#AAF",
-        heading_4_color = "#FFA",
-        heading_5_color = "#AFF",
-        heading_6_color = "#FAF",
-        code_block_mono_color = "#6F6",
-        code_block_font_size = 14,
-        mono_color = "#6F6",
-        block_quote_color = "#FFA",
-    }
+    local x = game_doc.settings.edge_size
+    local y = game_doc.settings.edge_size * 2 + game_doc.settings.header_size + game_doc.settings.button_height
+    local w = game_doc.settings.width - game_doc.settings.edge_size * 2
+    local h = game_doc.settings.height - game_doc.settings.edge_size * 3 - game_doc.settings.header_size - game_doc.settings.button_height
 
     --load hypertext via markdown2formspec
     game_doc.add_direct_entry(
         category_name,
         entry_name,
-        md2f.md2ff(x,y,w,h,markdown_file,entry_name,md2f_settings),
+        md2f.md2ff(x,y,w,h,markdown_file,entry_name,game_doc.md2f_settings),
         hidden
     )
 end

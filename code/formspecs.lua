@@ -10,11 +10,16 @@
 -- <> game_doc.entry_form()                                 --
 --                                                          --
 -- Use the above functions to show the stadard game_doc     --
--- formspecs.                                               --
+-- formspecs. There is a fourth, private function which     --
+-- provides the help formspec found in the main form.       --
+--                                                          --
+-- This file also provides the functions for receiving and  --
+-- responding to the submission of these formspecs after    --
+-- these functions are defined.                             --
 --------------------------------------------------------------
 
--- Common header for the three formspecs
-local function header()
+-- Common functions for the three formspecs
+game_doc.header = function()
     return table.concat(
         {
             "formspec_version[4]\n",
@@ -22,6 +27,43 @@ local function header()
             "position[0.5,0.5]\n",
             "bgcolor[".. game_doc.settings.bgcolor .."]\n",
         },"")
+end
+
+--Overridable button functions for i3 support
+game_doc.help_button = function(x,y,w,h,i3)
+    if i3 then
+        return table.concat({
+            "image_button[",x,",",y,";",w,",",h,";game_doc_help.png;gmdc_help;;;false;game_doc_help_pressed.png]"
+        })
+    else
+        return table.concat({"button[",x,",",y,";",w,",",h,";gmdc_help;Help]\n"})
+    end
+end
+
+game_doc.back_button = function(x,y,w,h,i3)
+    if i3 then
+        return table.concat({"image_button[",x,",",y,";",w,",",h,";game_doc_back.png;gmdc_back;;;false;game_doc_back_pressed.png]"})
+    else
+        return table.concat({"button[",x,",",y,";",w,",",h,";gmdc_back;Back]\n"})
+    end
+end
+
+game_doc.select_button = function(x,y,w,h,i3)
+    if i3 then
+        return table.concat({"image_button[",x,",",y,";",w,",",h,";game_doc_select.png;gmdc_select;;;false;game_doc_select_pressed.png]"})
+    else
+        return table.concat({"button[",x,",",y,";",w,",",h,";gmdc_select;Select]\n"})
+    end
+end
+
+-- Function for hiding spaces to fix reorder issues
+local function move_spaces(s)
+    local new_table = {}
+    for i=1,#s do
+        local _s = s[i]
+        new_table[i] = _s:match("%s*(.*)").._s:match("%s*")
+    end
+    return new_table
 end
 
 ------------------------------
@@ -57,19 +99,22 @@ game_doc.main_form = function(player_name)
             local mname = game_doc.settings.main_name
             local non_list_height = hsize+edge*2+button_h
 
-            -- Get list of categories
-            local category_list = {}
-            for k in pairs(game_doc.doc_data) do table.insert(category_list, k) end
-            table.sort(category_list)
-            category_list = table.concat(category_list, ",")
+            if game_doc.category_list == nil then
+                -- Get list of categories
+                local category_list = {}
+                for k in pairs(game_doc.doc_data) do table.insert(category_list, k) end
+                table.sort(category_list)
+                game_doc.category_list = category_list
+                game_doc.category_comma_list = table.concat(move_spaces(category_list), ",")
+            end
 
             game_doc.ready_main_form = table.concat({
-                header(),
+                game_doc.header(),
                 "hypertext[0,0;",w,",",h,";;<style color=",hcolor," size=",hfsize,"><b><center>",mname,"</center></b></style>]\n",
-                "button[",edge,",",edge+hsize,";",button_w,",",button_h,";gdmc_help;Help]\n",
-                "button_exit[",(taw/2)-button_w/2,",",edge+hsize,";",button_w,",",button_h,";gdmc_quit;Quit]\n",
-                "button[",taw-button_w,",",edge+hsize,";",button_w,",",button_h,";gdmc_select;Select]\n",
-                "textlist[",edge,",",non_list_height,";",taw,",",h-non_list_height,";gmdc_list;",category_list,";1;false]\n",
+                game_doc.help_button(edge, edge+hsize, button_w, button_h, game_doc.i3),
+                game_doc.select_button(taw-button_w, edge+hsize, button_w, button_h, game_doc.i3),
+                "box[",edge,",",non_list_height,";",taw,",",h-non_list_height-edge,";#bababa25]\n",
+                "textlist[",edge,",",non_list_height,";",taw,",",h-non_list_height-edge,";gmdc_list;",game_doc.category_comma_list,";;true]\n",
             },"")
         end
         return game_doc.ready_main_form
@@ -109,26 +154,40 @@ game_doc.category_form = function(category_name, player_name)
                 local hfsize = game_doc.settings.main_font_size
                 local non_list_height = hsize+edge*2+button_h
 
-                -- Get list of categories
-                local entry_list = {}
-                for k in pairs(game_doc.doc_data[category_name].entries) do table.insert(entry_list, k) end
-                table.sort(entry_list)
-                entry_list = table.concat(entry_list, ",")
+                if game_doc.category_list == nil then
+                    -- Get list of categories
+                    local category_list = {}
+                    for k in pairs(game_doc.doc_data) do table.insert(category_list, k) end
+                    table.sort(category_list)
+                    game_doc.category_list = category_list 
+                    game_doc.category_comma_list = table.concat(category_list, ",")
+                end
+
+                -- Get list of entries
+                if game_doc.entry_lists == nil then game_doc.entry_lists = {} end
+                if game_doc.entry_lists[category_name] == nil then
+                    game_doc.entry_lists[category_name] = {}
+                    local entry_list = {}
+                    for k in pairs(game_doc.doc_data[category_name].entries) do table.insert(entry_list, k) end
+                    table.sort(entry_list)
+                    game_doc.entry_lists[category_name].entry_list = entry_list
+                    game_doc.entry_lists[category_name].entry_comma_list = table.concat(move_spaces(entry_list), ",")
+                end
 
                 game_doc.ready_forms[category_name] = table.concat({
-                    header(),
+                    game_doc.header(),
                     "hypertext[0,0;",w,",",h,";;<style color=",hcolor," size=",hfsize,"><b><center>",category_name,"</center></b></style>]\n",
-                    "button[",edge,",",edge+hsize,";",button_w,",",button_h,";gdmc_back;Back]\n",
-                    "button_exit[",(taw/2)-button_w/2,",",edge+hsize,";",button_w,",",button_h,";gdmc_quit;Quit]\n",
-                    "button[",taw-button_w,",",edge+hsize,";",button_w,",",button_h,";gdmc_select;Select]\n",
-                    "textlist[",edge,",",non_list_height,";",taw,",",h-non_list_height,";gmdc_list;",entry_list,";1;false]\n",
+                    game_doc.back_button(edge, edge+hsize, button_w, button_h, game_doc.i3),
+                    game_doc.select_button(taw-button_w, edge+hsize, button_w, button_h, game_doc.i3),
+                    "box[",edge,",",non_list_height,";",taw,",",h-non_list_height-edge,";#bababa25]\n",
+                    "textlist[",edge,",",non_list_height,";",taw,",",h-non_list_height,";gmdc_list;",game_doc.entry_lists[category_name].entry_comma_list,";;true]\n",
                 },"")
             end
             return game_doc.ready_forms[category_name]
         end
     else --error
         return table.concat({
-            header(),
+            game_doc.header(),
             "label[0,0;Error: category: ", category_name, " does not exist.\n",
         },"")
     end
@@ -149,7 +208,7 @@ game_doc.entry_form = function(category_name, entry_name, player_name)
                 
             else
                 return table.concat({
-                    header(),
+                    game_doc.header(),
                     "label[0,0;Error: player: ", player_name, " is unable to view this hidden entry.\n",
                 },"")
             end
@@ -162,18 +221,146 @@ game_doc.entry_form = function(category_name, entry_name, player_name)
             local button_h = game_doc.settings.button_height
             local taw = w - edge * 2 --text_area_width
             local hsize = game_doc.settings.header_size
+            local hcolor = game_doc.settings.heading_color
+            local hfsize = game_doc.settings.main_font_size
 
             return table.concat({
-                header(),
-                "button[",edge,",",edge,";",button_w,",",button_h,";gdmc_back;Back]\n",
-                "button_exit[",(taw/2)-button_w/2,",",edge,";",button_w,",",button_h,";gdmc_quit;Quit]\n",
+                game_doc.header(),
+                "hypertext[0,0;",w,",",h,";;<style color=",hcolor," size=",hfsize,"><b><center>",entry_name,"</center></b></style>]\n",
+                game_doc.back_button(edge, edge+hsize, button_w, button_h, game_doc.i3),
                 game_doc.doc_data[category_name].entries[entry_name].hypertext,
             },"")
         end
     else --error
         return table.concat({
-            header(),
+            game_doc.header(),
             "label[0,0;Error: category: ", category_name, ", entry: ", entry_name," does not exist.\n",
         },"")
     end
 end
+
+------------------------------
+-- help_form
+--
+-- Merely explains how to use this game_doc documentation
+--
+game_doc.help_form = function()
+    local x = game_doc.settings.edge_size
+    local y = game_doc.settings.edge_size + game_doc.settings.header_size
+    local w = game_doc.settings.width - game_doc.settings.edge_size * 2
+    local h = game_doc.settings.height - game_doc.settings.edge_size * 2 - game_doc.settings.header_size
+    local edge = game_doc.settings.edge_size
+    local button_w = game_doc.settings.button_width
+    local button_h = game_doc.settings.button_height
+    local hsize = game_doc.settings.header_size
+    return table.concat({
+        game_doc.header(),
+        game_doc.back_button(edge, edge+hsize, button_w, button_h, game_doc.i3),
+        md2f.md2f(x,y+edge+button_h,w,h-edge*2-button_h,
+        --begin markdown for help file
+[[# **Game Guide Help**
+This game guide is built to provide you with all the knowledge needed to enjoy every part of this game: from building, to mining, farming, fighting, flying, tinkering, and more.
+#### Categories and Entries
+The guide is broken into *Categories* and *Entires*. *Categories* are shown on the main
+page, and once you **select** one or double click/tap that option in the list,
+you will be greeted with that Category's page of *Entries*.
+
+You then do the same on the entry page, and now you can read all about that exact topic.]]
+        --end markdown for help file
+        ,"game_doc_help",
+        game_doc.md2f_settings),
+    },"")
+end
+
+
+------------------------------
+-- on_recieve
+--
+-- Handles the above 4 formspec submissions
+--
+minetest.register_on_player_receive_fields(
+function(player, formname, fields)
+    --Early fail for efficiency
+    if formname:sub(1,4) == "gmdc" then
+        local player_name = player:get_player_name()
+        minetest.log(dump(fields))
+
+        ---------------Main Form---------------
+        if formname == "gmdc_main" then
+            --reused local function 
+            local function show_category(player_name)
+                local index = game_doc.player_data[player_name].selected_category or nil
+                if index == nil then return end
+                if game_doc.settings.hidden_enable then
+
+                else
+                    game_doc.player_data[player_name].selected_category = game_doc.category_list[index]
+                    minetest.show_formspec(player_name,"gmdc_category",game_doc.category_form(game_doc.category_list[index], player_name))
+                end
+            end
+
+            --handle help
+            if fields.gmdc_help then
+                minetest.show_formspec(player_name,"gmdc_help", game_doc.help_form())
+            --handle select
+            elseif fields.gmdc_select then
+                show_category(player_name)
+            --handle text_list
+            elseif fields.gmdc_list then
+                local type, index = fields.gmdc_list:sub(1,3), tonumber(fields.gmdc_list:sub(5))
+                if type == "CHG" then
+                    game_doc.player_data[player_name].selected_category = index
+                elseif type == "DCL" then
+                    game_doc.player_data[player_name].selected_category = index
+                    show_category(player_name)
+                end
+            end
+
+        ---------------Category Form---------------
+        elseif formname == "gmdc_category" then
+            --reused local function 
+            local function show_entry(player_name)
+                local index = game_doc.player_data[player_name].selected_entry or nil
+                if index == nil then return end
+                if game_doc.settings.hidden_enable then
+
+                else
+                    local category = game_doc.player_data[player_name].selected_category
+                    local entry = game_doc.entry_lists[category].entry_list[index]
+                    minetest.show_formspec(player_name,"gmdc_entry",game_doc.entry_form(category, entry, player_name))
+                end
+            end
+            --handle back
+            if fields.gmdc_back then
+                game_doc.player_data[player_name].selected_category = nil
+                minetest.show_formspec(player_name,"gmdc_main", game_doc.main_form(player_name))
+            --handle select
+            elseif fields.gmdc_select then
+                show_entry(player_name)
+            --handle text_list
+            elseif fields.gmdc_list then
+                local type, index = fields.gmdc_list:sub(1,3), tonumber(fields.gmdc_list:sub(5))
+                if type == "CHG" then
+                    game_doc.player_data[player_name].selected_entry = index
+                elseif type == "DCL" then
+                    game_doc.player_data[player_name].selected_entry = index
+                    show_entry(player_name)
+                end
+            end
+        ---------------Entry Form---------------
+        elseif formname == "gmdc_entry" then
+            --handle back
+            if fields.gmdc_back then
+                game_doc.player_data[player_name].selected_entry = nil
+                minetest.show_formspec(player_name,"gmdc_category", game_doc.category_form(game_doc.player_data[player_name].selected_category,player_name))
+            end
+        
+        ---------------Help Form---------------
+        elseif formname == "gmdc_help" then
+            if fields.gmdc_help_back then
+                game_doc.player_data[player_name].selected_category = nil
+                minetest.show_formspec(player_name,"gmdc_main", game_doc.main_form(player_name))
+            end
+        end
+    end
+end)

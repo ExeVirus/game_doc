@@ -13,7 +13,7 @@ game_doc_enable_chat_command (Enable chat command access) enum Enabled Enabled,D
 
 #------------Graphical Settings------------#
 
-               --Dimensions--
+#               --Dimensions--
 
 # Full Width of all game_doc formspecs
 game_doc_width (Formspec Width) float 20.0
@@ -33,15 +33,15 @@ game_doc_button_width (Button Width) float 5.0
 # The button heights
 game_doc_button_height (Button Height) float 1.6
 
-                 --Colors--
+#                 --Colors--
 
 # Formspec Background Color
-game_doc_bgcolor (Background Color) string #111E
+game_doc_bgcolor (Background Color) string #bababa25
 
 # Formspec heading Color
-game_doc_heading_color (Heading Color) string #AFA
+game_doc_heading_color (Heading Color) string #FFF
 
-                 --Text Specific--
+#                 --Text Specific--
 
 # Main Formspec Name
 game_doc_main_name (Main Formspec Heading) string Game Guide

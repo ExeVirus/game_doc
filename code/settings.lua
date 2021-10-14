@@ -77,7 +77,7 @@ handleStandardVariable("game_doc_button_height", "button_height", 1.6)
 handleStandardVariable("game_doc_bgcolor", "bgcolor", "#111E")
 
 -- Formspec heading Color
-handleStandardVariable("game_doc_heading_color", "heading_color", "#AFA")
+handleStandardVariable("game_doc_heading_color", "heading_color", "#FFF")
 
                --Text Specific--
 
@@ -86,3 +86,19 @@ handleStandardVariable("game_doc_main_name", "main_name", "Game Guide")
 
 -- Main Formspec Heading Font-Size
 handleStandardVariable("game_doc_main_font_size", "main_font_size", 32)
+
+               -- Markdown2Formspec
+game_doc.md2f_settings = {
+    background_color = "#bababa25",
+    font_color = "#FFF",
+    heading_1_color = "#AFA",
+    heading_2_color = "#FAA",
+    heading_3_color = "#AAF",
+    heading_4_color = "#FFA",
+    heading_5_color = "#AFF",
+    heading_6_color = "#FAF",
+    code_block_mono_color = "#6F6",
+    code_block_font_size = 14,
+    mono_color = "#6F6",
+    block_quote_color = "#FFA",
+}

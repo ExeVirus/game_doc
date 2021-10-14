@@ -1,3 +1,15 @@
+The following textures are licensed under Apache License 2.0,
+originally obtained from https://github.com/Remix-Design/remixicon
+
+textures/game_doc_back_pressed.png
+textures/game_doc_back.png
+textures/game_doc_help_pressed.png
+textures/game_doc_help.png
+textures/game_doc_select_pressed.png
+textures/game_doc_select.png
+
+All other files in this mod are licensed as follows:
+
 MIT License
 
 Copyright (c) 2021 ExeVirus

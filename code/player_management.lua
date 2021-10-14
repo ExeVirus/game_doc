@@ -25,6 +25,14 @@
 -- returned, the old player value will be remembered.       --
 --------------------------------------------------------------
 
---All hidden data for each player is stored here
-game_doc.player_data = {}
-
+--------------------------
+--
+-- on_joinplayer
+--
+-- handles creating and loading a player's stored data
+--
+minetest.register_on_joinplayer(
+function(player, last_login)
+    local player_name = player:get_player_name()
+    game_doc.player_data[player_name] = {}
+end)

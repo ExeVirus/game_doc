@@ -48,6 +48,7 @@ game_doc = {}
 game_doc.name = "game_doc"
 game_doc.path = minetest.get_modpath(game_doc.name)
 game_doc.doc_data = {} -- the actual entries
+game_doc.player_data = {} -- for storing current selected entries/categories, and hidden values
 game_doc.ready_forms = {} -- for storing ready made category formspecs- if hidden system is disabled
 game_doc.mods_loaded = false 
 
@@ -55,14 +56,10 @@ game_doc.mods_loaded = false
 dofile(game_doc.path .. "/code/settings.lua")
 dofile(game_doc.path .. "/code/add_entries.lua")
 dofile(game_doc.path .. "/code/direct_access.lua")
+dofile(game_doc.path .. "/code/player_management.lua")
+dofile(game_doc.path .. "/code/hidden_modifications.lua")
 dofile(game_doc.path .. "/code/formspecs.lua")
 dofile(game_doc.path .. "/code/integration.lua")
-
--- These are only used if the hidden system is enabled
-if game_doc.hidden_enable then
-    dofile(game_doc.path .. "/code/player_management.lua")
-    dofile(game_doc.path .. "/code/hidden_modifications.lua")
-end
 
 -- Done, let 'em know
 minetest.log("info","'game_doc' loaded successfully")
