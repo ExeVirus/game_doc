@@ -6,7 +6,7 @@
 -- managing player hidden values via mod storage.           --
 -- For example:                                             --
 --                                                          --
--- When a category is hidden by default, and a plyer has    --
+-- When a category is hidden by default, and a player has   --
 -- somehow unlocked that category or entry, they will have  --
 -- an entry in their player table specifying as such.       --
 --                                                          --
@@ -18,12 +18,22 @@
 -- Nothing happens in this file if the hidden system is     --
 -- disabled, as it's un-needed to track per-player data.    --
 --                                                          --
+-- Persistence is handled by storing each player's data     --
+-- by name in the world folder under "game_doc/<name>.json" --
+--                                                          --
 -- Note: if you have a player reveal a hidden entry, and    --
 -- then you remove that entry for some reason, they will    --
 -- have a memory leak here where we track that hidden value --
 -- but it's no longer needed. This is done so if that entry --
 -- returned, the old player value will be remembered.       --
 --------------------------------------------------------------
+
+--------------------------
+--
+-- load_player
+--
+-- Load the
+--
 
 --------------------------
 --

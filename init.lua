@@ -25,13 +25,6 @@
 ---- <> code/direct_access.lua:
 ----      Provides the 2 modder-facing game_doc direct access functions
 ----      Note: changes made in these tables will affect the game, they are NOT copies
-----
----- <> code/formspecs.lua:
-----      Generates the 3 different formspecs (main, category, and entry) for this in-game documentation/text system
-----
----- <> code/integration.lua:
-----      Based on settings, will register the command /game_doc to show the main documentation menu
-----      and will, if found, add a tab to i3 to access the same formspec from the inventory screen.
 ---- 
 ---- <> code/player_management.lua:
 ----      As player's join the game for the first time, and have their hidden values updated,
@@ -39,6 +32,13 @@
 ----
 ---- <> code/hidden_modifications.lua:
 ----      Provides the 4 modder-facing game_doc hidden-modification functions
+----
+---- <> code/formspecs.lua:
+----      Generates the 3 different formspecs (main, category, and entry) for this in-game documentation/text system
+----
+---- <> code/integration.lua:
+----      Based on settings, will register the command /game_doc to show the main documentation menu
+----      and will, if found, add a tab to i3 to access the same formspec from the inventory screen.
 
 
 -- Global main mod table
