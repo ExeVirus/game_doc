@@ -62,24 +62,20 @@ game_doc.get_doc_data()
 -- }
 --
 
--- Note the hidden values are just the starting values for new players, the player hidden entry/category data
--- is held in this function:
-game_doc.get_hidden_data()
+game_doc.get_hidden_data
 -- Returns a table 
--- {
---  player_name  = {
---    category_name { hidden=false/true, entries { entry1 { hidden=false/true }, entry2 {hidden=false/true } }
---    category_name { hidden=false/true, entries { entry1 { hidden=false/true }, entry2 {hidden=false/true } }
---    etc.
---  }
---  player_name  = {
---    category_name { hidden=false/true, entries { entry1 { hidden=false/true }, entry2 {hidden=false/true } }
---    category_name { hidden=false/true, entries { entry1 { hidden=false/true }, entry2 {hidden=false/true } }
---    etc.
---  }
---  etc.
+-- { 
+--      -- hidden_values actually stores a table of **shown** categories and entries
+--      hidden_values { categories {cat1, cat3},
+--                  entries[cat1] = { entry2, entry3 },
+--                  entries[cat2] = { entry1, entry3 },
+--                  entries[cat3] = { entry1, entry2, entry3 }, --possibly entire table doesn't exist
+--     selected_category = cat1 --possibly doesn't exist
+--     selected_entry = ent1 --possibly doesn't exist
 -- }
+--
 
+game_doc.get_doc_data()
 ```
 
 ## Settings 
