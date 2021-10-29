@@ -38,7 +38,7 @@ local world_path = minetest.get_worldpath()
 -- Loads a table from a .json file (if present) in the world
 -- folder
 --
-game_doc.load_from_json = function(file_name) 
+game_doc.load_from_json = function(file_name)
     local data = nil
     local f = io.open(world_path .. "/game_doc/" .. file_name .. ".json", "rb")
     if f ~= nil then
@@ -124,6 +124,104 @@ end
 
 --------------------------
 --
+-- hidden_table_diff()
+--
+-- diff only contains a list of categories that are changed, and a list of entries that are changed
+-- when comparing old_table to the current default hidden values for documentation
+--
+game_doc.hidden_table_diff = function(old_table)
+    --Safety Check
+    if type(old_table) ~= "table" then
+        return nil
+    end
+    --Returned table of diffs
+    local diff = {}
+
+    --Handle diff'd categories (new defaults that are different from old_table)
+    if old_table.categories then
+        diff.categories = {}
+        for cat,hidden in pairs(game_doc.hidden_default.categories) do
+            if old_table.categories[cat] == nil or old_table.categories[cat] ~= hidden then
+                diff.categories[cat] = hidden
+            end
+        end
+    end
+
+    --Handle diff'd entries (new defaults that are different from old_table)
+    if old_table.entry_table then
+        diff.entry_table = {}
+        for cat, cat_table in pairs(game_doc.hidden_default.entry_table) do
+            if old_table.entry_table[cat] ~= nil and old_table.entry_table[cat].entries ~= nil then --If old_table has this category
+                for ent, hidden in pairs(game_doc.hidden_default.entry_table[cat].entries) do
+                    if old_table.entry_table[cat].entries[ent] == nil or old_table.entry_table[cat].entries[ent] ~= hidden then
+                        old_table.entry_table[cat].entries[ent] = hidden
+                    end
+                end
+            else --Everything in default for this category is "new" defaults
+                diff.entry_table[cat] = { entries = {} }
+                for ent, hidden in pairs(game_doc.hidden_default.entry_table[cat].entries) do
+                    diff.entry_table[cat].entries[ent] = hidden
+                end
+            end
+        end
+    end
+
+    return diff
+end
+
+--------------------------
+--
+-- fix_all_players_defaults()
+--
+-- Load every player's hidden table, and adjust their hidden values
+-- based on the new defaults
+--
+game_doc.fix_all_players_defaults = function(diff)
+    local file_list = minetest.get_dir_list(world_path .. "/game_doc/", false) --only files, no directories
+    for i=1,#file_list,1 do
+        if file_list[i] ~= "hidden.defaults.json" and file_list[i]:sub(-5) == ".json" then
+            local player_data = game_doc.load_from_json(file_list[i])
+            if type(player_data) == "table" then --sanity check (to make sure the json is valid, and it's still a table at least)
+                -- Handle category default changes
+                if diff.categories and player_data.categories and type(player_data.categories) == "table" then
+                    for cat, hidden in pairs(diff.categories) do
+                        -- if they had an entry, that has been changed to the default, so delete the entry
+                        player_data.categories[cat] = nil
+                        --If they didn't have an entry, they were using the default anyways
+                    end
+                    if next(player_data.categories) == nil then
+                        player_data.categories = nil
+                    end
+                end
+
+                -- Handle entry default changes
+                if diff.entry_table and next(diff.entry_table) and player_data.entry_table and type(player_data.entry_table) == "table" and then
+                    for cat, cat_table in pairs(diff.entry_table) do
+                        if player.entry_table[cat] and player.entry_table[cat].entries then --they had an entry in that category different from the previous default
+                            for ent, hidden in pairs(diff.entry_table[cat]) do
+                                player.entry_table[cat].entries[ent] = nil 
+                            end
+                            if next(player.entry_table[cat].entries) == nil then
+                                player.entry_table[cat] = nil
+                            end
+                        end
+                    end
+                    if next(player_data.entry_table) == nil then
+                        player_data.entry_table = nil
+                    end
+                end
+
+                -- Save back the adjusted player data
+                if next(player_data) then --check there's something to save now
+                    game_doc.save_to_json(file_name[i]:sub(1,-6), player_data)
+                end
+            end
+        end
+    end
+end
+
+--------------------------
+--
 -- on_joinplayer()
 --
 -- handles creating and loading a player's stored data
@@ -182,38 +280,31 @@ end)
 
 --------------------------
 --
--- handle_modification(player_name,category,entry,show/hide) {true/false}
+-- handle_modification(player_name,category,entry,hide/show) {true/false}
 --
 -- handles changes to hidden values for a player's categories or entry
 --
-game_doc.handle_modification = function (player_name, category, entry, show)
-    if category == nil then
+game_doc.handle_modification = function (player_name, category, entry, hide)
+    if category == nil or game_doc.doc_data[category_name] == nil then
         return --Can't change what doesn't exist
     else if entry == nil then
         --This is a category change
 
         --Ensure the player data is loaded
-
+        game_doc.load_player_data(player_name)
         local player_data = game_doc.player_data[player_name]
 
         -- Ignore "modifications" that don't affect anything
-        if player_data.categories[category] then
-            if not show then
-                return --it's already hidden, so nothing needs to be done
-            end
-        else
-            if show then
-                return --It's already shown, so nothing needs to be done
-            end
+        if player_data.categories[category] == nil or player_data.categories[category] == hide then
+            return --it's already hidden, so nothing needs to be done
         end
 
         --Update the runtime lists
-        if show then
-            player_data.categories[category] = ~show
+        player_data.categories[category] = hide
+        if hide then
             table.insert(player_data.shown_categories, category)
             table.sort(player_data.shown_categories)
         else
-            player_data.categories[category] = ~show
             for i=1,#player_data.shown_categories,1 do
                 if player_data.shown_categories[i] == category then
                     table.remove(player_data.shown_categories, i)
@@ -225,6 +316,31 @@ game_doc.handle_modification = function (player_name, category, entry, show)
         game_doc.save_player_data(player_name)
     else --Handle an entry change
 
+        --Ensure the player data is loaded
+        game_doc.load_player_data(player_name)
+        local player_data = game_doc.player_data[player_name]
+
+        -- Ignore "modifications" that don't affect anything
+        if  player_data.entry_table[category] == nil or 
+            player_data.entry_table[category].entries[entry] == nil 
+            or player_data.entry_table[category].entries[entry] == hide then
+            return --it's already hidden, so nothing needs to be done
+        end
+
+        --Update the runtime lists
+        player_data.entry_table[category].entries[entry] = hide
+        if hide then
+            table.insert(player_data.entry_table[category].shown_entries, entry)
+            table.sort(player_data.shown_entries)
+        else
+            --iterate and remove instead of setting to nil, to maintain sorting and array validity
+            for i=1,#player_data.entry_table[category].shown_entries,1 do
+                if player_data.entry_table[category].shown_entries[i] == entry then
+                    table.remove(player_data.entry_table[category].shown_entries, i)
+                    break
+                end
+            end
+        end
 
         --overwrite the player's saved values 
         game_doc.save_player_data(player_name)
