@@ -195,14 +195,14 @@ game_doc.fix_all_players_defaults = function(diff)
                 end
 
                 -- Handle entry default changes
-                if diff.entry_table and next(diff.entry_table) and player_data.entry_table and type(player_data.entry_table) == "table" and then
+                if diff.entry_table and next(diff.entry_table) and player_data.entry_table and type(player_data.entry_table) == "table" then
                     for cat, cat_table in pairs(diff.entry_table) do
-                        if player.entry_table[cat] and player.entry_table[cat].entries then --they had an entry in that category different from the previous default
+                        if player_data.entry_table[cat] and player_data.entry_table[cat].entries then --they had an entry in that category different from the previous default
                             for ent, hidden in pairs(diff.entry_table[cat]) do
-                                player.entry_table[cat].entries[ent] = nil 
+                                player_data.entry_table[cat].entries[ent] = nil 
                             end
-                            if next(player.entry_table[cat].entries) == nil then
-                                player.entry_table[cat] = nil
+                            if next(player_data.entry_table[cat].entries) == nil then
+                                player_data.entry_table[cat] = nil
                             end
                         end
                     end
@@ -213,7 +213,7 @@ game_doc.fix_all_players_defaults = function(diff)
 
                 -- Save back the adjusted player data
                 if next(player_data) then --check there's something to save now
-                    game_doc.save_to_json(file_name[i]:sub(1,-6), player_data)
+                    game_doc.save_to_json(file_list[i]:sub(1,-6), player_data)
                 end
             end
         end
@@ -287,7 +287,7 @@ end)
 game_doc.handle_modification = function (player_name, category, entry, hide)
     if category == nil or game_doc.doc_data[category_name] == nil then
         return --Can't change what doesn't exist
-    else if entry == nil then
+    elseif entry == nil then
         --This is a category change
 
         --Ensure the player data is loaded
@@ -346,5 +346,3 @@ game_doc.handle_modification = function (player_name, category, entry, hide)
         game_doc.save_player_data(player_name)
     end
 end
-
-
