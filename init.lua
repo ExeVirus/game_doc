@@ -56,8 +56,8 @@ game_doc.mods_loaded = false
 dofile(game_doc.path .. "/code/settings.lua")
 dofile(game_doc.path .. "/code/add_entries.lua")
 dofile(game_doc.path .. "/code/direct_access.lua")
-dofile(game_doc.path .. "/code/player_management.lua")
-dofile(game_doc.path .. "/code/hidden_modifications.lua")
+--dofile(game_doc.path .. "/code/player_management.lua")
+--dofile(game_doc.path .. "/code/hidden_modifications.lua")
 dofile(game_doc.path .. "/code/formspecs.lua")
 dofile(game_doc.path .. "/code/integration.lua")
 

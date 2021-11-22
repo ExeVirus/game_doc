@@ -27,11 +27,9 @@ game_doc.add_folder_entries(category_name, folder_location, hide_category, hide_
 -- hide_**** is always optional, defaults to false
 -- Will parse the provided folder for any `.md` files that are present, turn them into hypertext elements,
 -- use their filename as <entry_name> and add them to the provided category. 
-
-
 ```
 
-## Hidden Entries
+## Hidden Entries WIP, CURRENTLY DISABLED
 
 This mod also supports hidden and unhidden entries, all categories and entries are shown by default to all players. To hide or unhide entries use the following, if player_name is nil, this change occurs for all future joining players. If player_name is a boolean of "true", this change will occur
 for all known players, and all future joining players. If player_name is a boolean of "false", this change will occur for all currently connected players only. 
